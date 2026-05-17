@@ -98,15 +98,12 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* ============================================================ */
-/* PERBAIKAN TOTAL: TEKS SANGAT CERAH & KELIHATAN               */
-/* ============================================================ */
+/* TEKS CERAH & KELIHATAN */
 .q-text, .q-text b, .q-text i, .q-text u, .q-text strong, .q-text em,
 .opt-text, .opt-text b, .opt-text i, .opt-text u, .opt-text strong, .opt-text em {
-    color: #FFFFFF !important; /* Putih murni 100% sangat cerah */
-    text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.4); /* Teks lebih tajam dan menonjol */
+    color: #FFFFFF !important; 
+    text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.4); 
 }
-/* ============================================================ */
 
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
 </style>
@@ -242,6 +239,32 @@ function simpleHash(str) {
     return hash.toString(36);
 }
 
+/* ============================================================ */
+/* FUNGSI PENGURUTAN SOAL: PG DI AWAL, URAIAN DI AKHIR          */
+/* ============================================================ */
+function sortQuestionsByType(list) {
+    var pg = [];
+    var ur = [];
+    
+    // 1. Pisahkan berdasarkan tipe
+    list.forEach(function(q) {
+        if (q.type === 'pg' || !q.type) { // Jika kosong, anggap PG
+            pg.push(q);
+        } else {
+            ur.push(q);
+        }
+    });
+    
+    // 2. Urutkan masing-masing tipe berdasarkan ID Dokumen dari Firebase
+    // Ini memastikan urutan soal sesuai dengan urutan di Bank Soal
+    pg.sort(function(a, b) { return a.id.localeCompare(b.id); });
+    ur.sort(function(a, b) { return a.id.localeCompare(b.id); });
+    
+    // 3. Gabungkan (PG di awal, Uraian di akhir)
+    return pg.concat(ur);
+}
+/* ============================================================ */
+
 window.onload = function() {
     document.addEventListener('contextmenu', function(e){ e.preventDefault(); }, false);
     document.addEventListener('copy', function(e){ e.preventDefault(); }, false);
@@ -291,9 +314,9 @@ function checkResumedExam(){
                 if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
                 var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
                 
-                list.sort(function(a,b){ return a.id.localeCompare(b.id); }); 
+                // Terapkan pengurutan PG di awal, Uraian di akhir
+                qList = sortQuestionsByType(list);
                 
-                qList = list;
                 startExam(true); 
             });
         } catch(e) {
@@ -367,9 +390,9 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        list.sort(function(a,b){ return a.id.localeCompare(b.id); });
+        // Terapkan pengurutan PG di awal, Uraian di akhir
+        qList = sortQuestionsByType(list);
         
-        qList = list;
         saveStateLocally(); 
         startExam(false);
     }).catch(function(e){
