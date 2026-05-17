@@ -62,12 +62,13 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .opt-row{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1.5px solid #2a3f5f;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:6px;background:rgba(15,25,35,.5);-webkit-tap-highlight-color:transparent}
 .opt-row:active{transform:scale(.98)}
 .opt-row.picked{border-color:#c9a84c;background:rgba(201,168,76,.07);box-shadow:inset 0 0 0 1px rgba(201,168,76,.1)}
-.opt-ltr{width:28px;height:28px;min-width:28px;border-radius:7px;background:#182538;border:1.5px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#7a8ba5;transition:all .15s}
+.opt-ltr{width:28px;height:28px;min-width:28px;border-radius:7px;background:#182538;border:1.5px solid #2a3f5f;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#FFFFFF;transition:all .15s}
 .opt-row.picked .opt-ltr{background:#c9a84c;border-color:#c9a84c;color:#1a2744}
 .opt-content{flex:1;word-break:break-word;min-width:0}
 
-.essay-box{width:100%;min-height:160px;background:rgba(15,25,35,.5);border:1.5px solid #2a3f5f;color:#e8ecf1;padding:12px;border-radius:10px;font-family:inherit;font-size:15px;resize:none;line-height:1.7;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.essay-box{width:100%;min-height:160px;background:rgba(15,25,35,.5);border:1.5px solid #2a3f5f;color:#FFFFFF;padding:12px;border-radius:10px;font-family:inherit;font-size:15px;resize:none;line-height:1.7;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .essay-box:focus{outline:none;border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.essay-box::placeholder{color: #5a7192;}
 
 .bot-nav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(15,25,35,.92) 0%,rgba(15,25,35,.98) 100%);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #2a3f5f;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:center;gap:10px;z-index:30}
 .b-nav-btn{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:8px;border:1.5px solid #2a3f5f;background:#182538;color:#e8ecf1;cursor:pointer;font-size:13px;font-weight:600;transition:all .12s;-webkit-tap-highlight-color:transparent;flex:1;justify-content:center}
@@ -97,11 +98,15 @@ body{font-family:'Source Sans 3',sans-serif;background:#0f1923;color:#e8ecf1;min
 .fup{animation:fadeUp .25s ease-out forwards}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-/* PERBAIKAN WARNA: Memaksa semua teks di dalam soal dan opsi berwarna putih */
+/* ============================================================ */
+/* PERBAIKAN TOTAL: TEKS SANGAT CERAH & KELIHATAN               */
+/* ============================================================ */
 .q-text, .q-text b, .q-text i, .q-text u, .q-text strong, .q-text em,
 .opt-text, .opt-text b, .opt-text i, .opt-text u, .opt-text strong, .opt-text em {
-    color: #e8ecf1 !important;
+    color: #FFFFFF !important; /* Putih murni 100% sangat cerah */
+    text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.4); /* Teks lebih tajam dan menonjol */
 }
+/* ============================================================ */
 
 @supports(padding:max(0px)){.bot-nav{padding-bottom:max(12px,env(safe-area-inset-bottom))}.exam-hdr{padding-top:max(8px,env(safe-area-inset-top))}}
 </style>
@@ -286,7 +291,6 @@ function checkResumedExam(){
                 if(s.empty){alert('Soal tidak ditemukan!');location.reload();return}
                 var list = s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
                 
-                // PERBAIKAN 1: Soal TIDAK diacak, diurutkan sesuai ID di bank soal
                 list.sort(function(a,b){ return a.id.localeCompare(b.id); }); 
                 
                 qList = list;
@@ -363,7 +367,6 @@ function loadQuestions(){
         if(s.empty){alert('Soal PAJ untuk mapel ini belum tersedia!');location.reload();return}
         var list=s.docs.map(function(d){return Object.assign({id:d.id},d.data())});
         
-        // PERBAIKAN 1: Soal TIDAK diacak, diurutkan berdasarkan ID dokumen (sesuai bank soal)
         list.sort(function(a,b){ return a.id.localeCompare(b.id); });
         
         qList = list;
@@ -434,7 +437,6 @@ function renderQ(idx){
     h+='<div class="q-num">'+(idx+1)+'</div>';
     h+='<div class="flex-1 min-w-0">';
     
-    // PERBAIKAN 2: Menambahkan class q-text agar CSS memaksa warna putih
     h+='<p class="q-text text-[15px] leading-relaxed font-medium">'+sanitizeHtml(q.text)+'</p>';
     if(q.image) h+='<img src="'+q.image+'" onclick="zoomImage(this.src)" class="q-img" alt="Gambar Soal">';
     h+='</div></div>';
@@ -467,7 +469,6 @@ function renderQ(idx){
                 h+='<div class="opt-content">';
                 
                 if(optText !== '') {
-                    // PERBAIKAN 2: Menambahkan class opt-text agar CSS memaksa warna putih
                     h+='<div class="opt-text text-sm leading-relaxed">'+sanitizeHtml(optText)+'</div>';
                 }
                 
@@ -574,7 +575,7 @@ function doSubmit(forced){
         essayScore:nilaiUraian, uraianScore:nilaiUraian, scoreUraian:nilaiUraian, nilaiUraian:nilaiUraian,
         score:nilaiAkhir, finalScore:nilaiAkhir, nilaiAkhir:nilaiAkhir, totalScore:nilaiAkhir,
         dikoreksi: urCount > 0 ? false : true, 
-        submittedAt: new Date().toISOString() // Gunakan waktu lokal agar tidak error saat offline
+        submittedAt: new Date().toISOString()
     };
     
     localStorage.setItem('PAJ_SUBMIT_DATA', JSON.stringify(rd));
